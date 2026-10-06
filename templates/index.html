@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SentimentAI Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">S</div>
+      <div><h1>SentimentAI</h1><span>ML Dashboard</span></div>
+    </div>
+    <nav>
+      <button class="nav-item active" data-target="dashboard"><span>▦</span> Dashboard</button>
+      <button class="nav-item" data-target="analyzer"><span>✦</span> Analyzer</button>
+      <button class="nav-item" data-target="history"><span>◷</span> History</button>
+      <button class="nav-item" data-target="about"><span>ⓘ</span> About</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="model-status"><i></i><div><b>Model Online</b><small>Naive Bayes ML</small></div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">MACHINE LEARNING</p>
+        <h2>Sentiment Analysis Dashboard</h2>
+      </div>
+      <button class="refresh" onclick="loadStats()">↻ Refresh</button>
+    </header>
+
+    <section id="dashboard" class="page active-page">
+      <div class="hero-card">
+        <div>
+          <span class="pill">AI-POWERED TEXT ANALYSIS</span>
+          <h3>Understand what people are saying.</h3>
+          <p>Analyze customer reviews, feedback and comments using a lightweight machine-learning classifier.</p>
+          <button class="primary" onclick="showPage('analyzer')">Analyze Text →</button>
+        </div>
+        <div class="hero-orb"><div>AI</div></div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon purple">Σ</div><span>Total Analyses</span><strong id="total">0</strong><small>All analyzed texts</small></div>
+        <div class="stat-card"><div class="stat-icon green">+</div><span>Positive</span><strong id="positive">0</strong><small>Positive predictions</small></div>
+        <div class="stat-card"><div class="stat-icon red">−</div><span>Negative</span><strong id="negative">0</strong><small>Negative predictions</small></div>
+        <div class="stat-card"><div class="stat-icon amber">○</div><span>Neutral</span><strong id="neutral">0</strong><small>Neutral predictions</small></div>
+      </div>
+
+      <div class="content-grid">
+        <div class="panel">
+          <div class="panel-head"><div><h3>Sentiment Distribution</h3><p>Based on your analyzed texts</p></div></div>
+          <div class="chart-wrap"><canvas id="sentimentChart"></canvas></div>
+        </div>
+        <div class="panel quick-panel">
+          <div class="panel-head"><div><h3>Quick Analysis</h3><p>Try a sample sentence</p></div></div>
+          <textarea id="quickText" placeholder="Type your review here..."></textarea>
+          <button class="primary full" onclick="quickAnalyze()">Analyze Sentiment</button>
+          <div id="quickResult" class="mini-result hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="analyzer" class="page">
+      <div class="section-title"><span class="pill">TEXT ANALYZER</span><h3>Analyze customer feedback</h3><p>Enter any English sentence and let the ML model classify its sentiment.</p></div>
+      <div class="analyzer-grid">
+        <div class="panel analyzer-input">
+          <label>Your text</label>
+          <textarea id="mainText" maxlength="2000" placeholder="Example: I absolutely love this product. The quality is excellent!"></textarea>
+          <div class="text-meta"><span id="charCount">0 / 2000</span><button class="clear" onclick="document.getElementById('mainText').value=''; updateCount()">Clear</button></div>
+          <button class="primary full" onclick="analyzeMain()">Analyze with ML Model</button>
+          <div class="samples">
+            <b>Try an example</b>
+            <button onclick="useSample(0)">Positive review</button>
+            <button onclick="useSample(1)">Negative review</button>
+            <button onclick="useSample(2)">Neutral statement</button>
+          </div>
+        </div>
+        <div class="panel result-panel">
+          <div class="empty-state" id="emptyResult"><div class="empty-icon">✦</div><h3>Your result appears here</h3><p>Analyze a text to see sentiment, confidence and class probabilities.</p></div>
+          <div id="fullResult" class="hidden">
+            <span id="resultPill" class="result-pill">POSITIVE</span>
+            <div class="result-score"><strong id="confidence">0%</strong><span>confidence</span></div>
+            <div class="bar-row"><span>Positive</span><div><i id="posBar"></i></div><b id="posScore">0%</b></div>
+            <div class="bar-row"><span>Negative</span><div><i id="negBar"></i></div><b id="negScore">0%</b></div>
+            <div class="bar-row"><span>Neutral</span><div><i id="neuBar"></i></div><b id="neuScore">0%</b></div>
+            <div class="result-note">Prediction generated by the project's Multinomial Naive Bayes model.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="history" class="page">
+      <div class="section-title"><span class="pill">ACTIVITY</span><h3>Analysis history</h3><p>Your latest analyzed texts are stored locally in CSV format.</p></div>
+      <div class="panel table-panel">
+        <div class="table-wrap"><table><thead><tr><th>Time</th><th>Text</th><th>Sentiment</th><th>Confidence</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="about" class="page">
+      <div class="section-title"><span class="pill">PROJECT</span><h3>About this dashboard</h3><p>A complete local ML project designed for learning, demonstrations and mini-project presentations.</p></div>
+      <div class="about-grid">
+        <div class="panel"><h3>How it works</h3><ol><li>A labeled CSV dataset is loaded when Flask starts.</li><li>The custom Naive Bayes model learns word frequencies for Positive, Negative and Neutral classes.</li><li>New text is tokenized and scored using Bayesian probabilities.</li><li>The result is returned through a JSON API and rendered in this dashboard.</li></ol></div>
+        <div class="panel"><h3>Technology</h3><div class="tech-list"><span>Python 3.13</span><span>Flask</span><span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Machine Learning</span><span>Naive Bayes</span><span>CSV</span></div></div>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

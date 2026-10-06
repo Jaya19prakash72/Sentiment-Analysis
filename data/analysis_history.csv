@@ -1,0 +1,11 @@
+timestamp,text,sentiment,confidence
+2026-09-21T11:44:52,I am a  Very good person,Negative,50.94
+2026-09-21T11:50:20,I am searching for pg in banglore,Neutral,40.24
+2026-09-21T11:50:30,I am searching for pg in banglore,Neutral,40.24
+2026-09-22T10:45:42,I am Very with today class,Positive,51.21
+2026-09-22T10:47:15,The support team solved my problem quickly,Positive,92.71
+2026-09-22T10:47:31,The support team solved my problem quickly,Positive,92.71
+2026-09-23T10:18:21,i am good at python,Positive,48.9
+2026-09-23T10:19:29,i am good at python,Positive,48.9
+2026-09-23T10:19:30,i am good at python,Positive,48.9
+2026-09-23T10:19:31,i am good at python,Positive,48.9
